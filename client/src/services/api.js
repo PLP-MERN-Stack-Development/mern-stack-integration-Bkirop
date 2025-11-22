@@ -9,6 +9,24 @@ const api = axios.create({
   }
 });
 
+// Add request interceptor to log outgoing requests
+api.interceptors.request.use(
+  (config) => {
+    console.log('API Request:', {
+      method: config.method,
+      url: config.url,
+      baseURL: config.baseURL,
+      fullURL: `${config.baseURL}${config.url}`
+    });
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 // Add token to requests
 api.interceptors.request.use(
   (config) => {
@@ -38,7 +56,8 @@ api.interceptors.response.use(
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
-  getMe: () => api.get('/auth/me')
+  getMe: () => api.get('/auth/me'),
+  resetPassword: (token, password) => api.post('/auth/reset-password', { token, password })
 };
 
 // Posts

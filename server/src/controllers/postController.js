@@ -94,9 +94,16 @@ exports.getPost = async (req, res, next) => {
 // @access  Private
 exports.createPost = async (req, res, next) => {
   try {
+    console.log('Create Post Request:', {
+      body: req.body,
+      user: req.user ? req.user.id : 'No user',
+      headers: req.headers
+    });
+
     // Validate
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         errors: errors.array()
